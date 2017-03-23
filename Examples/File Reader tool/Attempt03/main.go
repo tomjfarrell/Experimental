@@ -8,7 +8,8 @@ import (
 )
 
 var file = flag.String("file", "/var/tmp/text", "source file")
-var lines = flag.Int("lines", 10, "lines to read, starting from end")
+var alines =flag.Int("alines", 10, "lines to read, starting from beginning")
+var zlines = flag.Int("zlines", 10, "lines to read, starting from end")
 
 func check(e error) {
 	if e != nil {
