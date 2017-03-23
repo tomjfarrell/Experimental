@@ -20,8 +20,10 @@ func check(e error) {
 	}
 }
 
-func filereader(file, string) {
-	
+func filereader(file,string) {
+	dat, err := ioutil.ReadFile(file)
+	check(err)
+	return dat
 }
 
 func main() {
@@ -32,11 +34,10 @@ func main() {
 
 	fmt.Println("file flag using: ", file)
 
-	dat, err := ioutil.ReadFile(file)
-	check(err)
-	contents := strings.Split(string(dat), "\n")
+	file := filereader(file)
+	contents := strings.Split(string(file), "\n")
 	if len(contents) < 11 {
-		fmt.Println(string(dat))
+		fmt.Println(string(file))
 	} else {
 		for i := len(contents)-lines; i < len(contents); i++ {
 			fmt.Println(contents[i])
