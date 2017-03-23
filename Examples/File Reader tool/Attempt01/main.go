@@ -20,10 +20,6 @@ func check(e error) {
 	}
 }
 
-func filereader(file, string) {
-
-}
-
 func main() {
 
 	flag.Parse()
