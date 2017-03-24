@@ -6,6 +6,8 @@ import (
 	"flag"
 	"strings"
 	"os"
+	"io"
+	"bytes"
 )
 
 var file = flag.String("file", "/var/tmp/text", "source file")
@@ -31,9 +33,6 @@ func filereader(file string, size int64) {
 			check(err)
 			contents := strings.Split(string(data[:count]), "\n")
 			length := len(contents)-1
-			for i := 0; i < length; i++ {
-				fmt.Println(i + 1, ":", contents[i])
-			}
 			fmt.Printf("read %d bytes: %q\n", count, data[:count])
 		} else {
 			fmt.Printf("***less than %v bytes left, printing remaining %v from beginning***\n",len(data),i)
@@ -42,9 +41,6 @@ func filereader(file string, size int64) {
 			check(err)
 			contents := strings.Split(string(remainder[:count]), "\n")
 			length := len(contents)-1
-			for i := 0; i < length; i++ {
-				fmt.Println(i + 1, ":", contents[i])
-			}
 			fmt.Printf("read %d bytes: %q\n", count, remainder[:count])
 
 		}
@@ -63,7 +59,27 @@ func request_printer(answer []byte) {
 	}
 }
 
-//prints request as received from flags
+//counts lines so that line numbers will be correct
+func lineCounter(r io.Reader) (int, error) {
+	buf := make([]byte, 32*1024)
+	count := 0
+	lineSep := []byte{'\n'}
+
+	for {
+		c, err := r.Read(buf)
+		count += bytes.Count(buf[:c], lineSep)
+
+		switch {
+		case err == io.EOF:
+			return count, nil
+
+		case err != nil:
+			return count, err
+		}
+	}
+}
+
+//prints request as received from flags, returns file size
 func printrequest(file string, a,z int) int64 {
 	stat, err := os.Stat(file)
 	check(err)
