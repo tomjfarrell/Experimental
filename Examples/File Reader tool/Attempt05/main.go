@@ -30,10 +30,10 @@ func filereader2(file string, size int64) {
 	check(err)
 
 	data := make([]byte, 100)
-	for i := n-100; i > 0; i-=100 {
-		if n > 0 {
-			fmt.Printf("reading %v bytes starting at offset %v\n",len(data),n)
-			count, err := f.ReadAt(data,int64(n))
+	for i := n; i > 0; i-=100 {
+		if i >= 100 {
+			fmt.Printf("reading %v bytes starting at offset %v\n",len(data),n-100)
+			count, err := f.ReadAt(data,int64(n-100))
 			check(err)
 			fmt.Println(string(data[:count]))
 		} else {
