@@ -24,16 +24,25 @@ func filereader(file string) []byte {
 	return dat
 }
 func filereader2(file string, size int64) {
-	n := size
-	fmt.Printf("Size is still %v.\n",n)
+	n := int(size)
 
   f, err := os.Open(file)
 	check(err)
 
 	data := make([]byte, 100)
-	count, err := f.Read(data)
-	check(err)
-	fmt.Println(string(data[:count]))
+	for i := n-100; i > 0; i-=100 {
+		if n > 0 {
+			fmt.Printf("reading %v bytes starting at offset %v\n",len(data),n)
+			count, err := f.ReadAt(data,int64(n))
+			check(err)
+			fmt.Println(string(data[:count]))
+		} else {
+			//count, err := f.ReadAt(data,int64(n))
+			//check(err)
+			//fmt.Println(string(data[:count]))
+			fmt.Println("else happened")
+		}
+	}
 }
 
 func printrequest(file string, a,z int) int64 {
