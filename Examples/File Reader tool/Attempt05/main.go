@@ -18,12 +18,7 @@ func check(e error) {
 	}
 }
 
-//func filereader(file string) []byte {
-//	dat, err := ioutil.ReadFile(file)
-//	check(err)
-//	return dat
-//}
-
+// reads file in chunks until line count satisfied
 func filereader(file string, size int64) {
   f, err := os.Open(file)
 	check(err)
@@ -56,18 +51,23 @@ func filereader(file string, size int64) {
 	}
 }
 
-func linefinder(data string, lines int) {
-  //will find lines received from filereader
+//will find lines from data received from filereader and return them in array
+func linefinder(data string, lines int) []byte {
+  array := make([]byte, lines)
 }
 
+//final print of requested data with line numbers
+func request_printer(answer []byte) {
+	for i := 0; i < len(answer); i++ {
+		fmt.Println(i + 1, ":", answer[i])
+	}
+}
+
+//prints request as received from flags
 func printrequest(file string, a,z int) int64 {
 	stat, err := os.Stat(file)
 	check(err)
 	fmt.Printf("Filename: '%s'|Size: %d bytes|Modified: %v\n", stat.Name(),stat.Size(),stat.ModTime())
-	//fmt.Printf("file: %s, length of file %d\n", file, l)
-	if (a == 0) && (z == 0) {
-		fmt.Println("Need --alines and/or --zlines flag(s)")
-	}
 	return stat.Size()
 }
 
@@ -76,30 +76,5 @@ func main() {
 
 	flag.Parse()
 
-	//data := filereader(*file)
-	//contents := strings.Split(string(data), "\n")
-	//length := len(contents)-1
 	size := printrequest(*file,*alines,*zlines)
   filereader(*file,size)
-
-	//if (length < (*alines + *zlines)) {
-	//	fmt.Println("Not enough contents to fulfill request, printing entire file.")
-	//	fmt.Printf("There will be an overlap of %d line(s)\n",(*alines+*zlines-length))
-	//	for i := 0; i < length; i++ {
-	//		fmt.Println(i+1, ":", contents[i])
-	//	}
-	//} else {
-	//	if *alines > 0 {
-	//		fmt.Printf("reading first %d lines:\n", *alines)
-	//		for i := 0; i < *alines; i++ {
-	//			fmt.Println(i+1, ":", contents[i])
-	//		}
-	//	}
-	//	if *zlines > 0 {
-	//		fmt.Printf("reading last %d lines:\n", *zlines)
-	//		for i := length-int(*zlines); i < length; i++ {
-	//			fmt.Println(i+1,":",contents[i])
-	//		}
-	//	}
-	//}
-}
