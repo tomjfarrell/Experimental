@@ -24,23 +24,22 @@ func filereader(file string) []byte {
 	return dat
 }
 func filereader2(file string, size int64) {
-	n := int(size)
-
   f, err := os.Open(file)
 	check(err)
-
-	data := make([]byte, 100)
-	for i := n; i > 0; i-=100 {
-		if i >= 100 {
-			fmt.Printf("reading %v bytes starting at offset %v\n",len(data),n-100)
-			count, err := f.ReadAt(data,int64(n-100))
+  chunksize := 500
+	data := make([]byte, chunksize)
+	for i := int(size); i > 0; i-=chunksize {
+		if i >= 500 {
+			fmt.Printf("***reading %v bytes, starting at offset %v***\n",len(data),i-chunksize)
+			count, err := f.ReadAt(data,int64(i-chunksize))
 			check(err)
 			fmt.Println(string(data[:count]))
 		} else {
-			//count, err := f.ReadAt(data,int64(n))
-			//check(err)
-			//fmt.Println(string(data[:count]))
-			fmt.Println("else happened")
+			fmt.Printf("***less than %v bytes left, printing remaining %v from beginning***\n",len(data),i)
+			remainder := make([]byte,i)
+			count, err := f.Read(remainder)
+			check(err)
+			fmt.Println(string(remainder[:count]))
 		}
 	}
 }
