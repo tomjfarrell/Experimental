@@ -88,8 +88,8 @@ func line_counter(r io.Reader) (int, error) {
 
 //final print of requested data with line numbers
 func request_printer(answer []string) {
-	for i := 0; i < len(answer); i++ {
-		fmt.Println(i + 1, ":", answer[i])
+	for i := 1; i <= len(answer); i++ {
+		fmt.Println(i, ":", answer[i])
 	}
 }
 
