@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"flag"
 	"strings"
 	"os"
@@ -48,7 +47,7 @@ func file_reader(file string, size int64) chan string {
 }
 
 //will find lines from data received from filereader and return them in array
-func line_finder(readout chan string, lines int) []string {
+func line_finder(readout chan string) []string {
   var arrayout []string //create final string array with predefined length "lines"
 	var leftover string //create array to hold remainder after /n is found
 	for i := range readout {
@@ -100,6 +99,12 @@ func printrequest(file string, a,z int) int64 {
 	stat, err := os.Stat(file)
 	check(err)
 	fmt.Printf("Filename: '%s'|Size: %d bytes|Modified: %v\n", stat.Name(),stat.Size(),stat.ModTime())
+	if a != 0 {
+		fmt.Printf("Pulling first %v lines.\n", a)
+	}
+	if z != 0 {
+		fmt.Printf("Pulling last %v lines.\n", z)
+	}
 	return stat.Size()
 }
 
