@@ -48,20 +48,20 @@ func file_reader(file string, size int64) chan []string {
 }
 
 //will find lines from data received from filereader and return them in array
-func line_finder(readout chan []string, lines int) []string {
-  var array [lines]string //create final string array with predefined length
-	var leftover []string //create array to hold remainder after /n is found
+func line_finder(readout chan string, lines int) []string {
+  var arrayout [lines]string //create final string array with predefined length "lines"
+	var leftover string //create array to hold remainder after /n is found
 	for i := range readout {
 		leftover = append(readout, leftover...)  //prepend fileout from file reader to leftover array
 		if strings.Contains(i, "\n") { //if fileout contains \n
 			split := strings.Split(i, "\n") //split at \n
-			array = append(string(split[1]), array) //append full line to final array
+			arrayout = append(string(split[1]), arrayout) //append full line to final array
 			leftover = append(leftover, []byte(split[0])) //append remainder to leftover array
 		} else { //if no \n is found
 			append(leftover, i) //append to leftover array
 		}
 	}
-	return array
+	return arrayout
 }
 
 //counts lines so that line numbers will be correct
