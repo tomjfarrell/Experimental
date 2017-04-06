@@ -56,11 +56,11 @@ func line_finder(readout chan string, lines int) []string {
 		if strings.Contains(leftover, "\n") { //if fileout contains \n
 			split := strings.Split(leftover, "\n") //split at \n
 			for i := 1; i <= len(split); i++ {
-				arrayout = append(split[i], arrayout...)
+				arrayout = append([]string{split[i]}, arrayout...)
 			}
 			leftover = split[0] //set leftover to remainder of slice
 		} else { //if no \n is found
-			leftover = append(leftover, i) //append to leftover array
+			leftover = leftover + i //append to leftover array
 		}
 	}
 	return arrayout
