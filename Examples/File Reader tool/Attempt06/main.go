@@ -49,7 +49,7 @@ func file_reader(file string, size int64) chan string {
 
 //will find lines from data received from filereader and return them in array
 func line_finder(readout chan string, lines int) []string {
-  var arrayout string //create final string array with predefined length "lines"
+  var arrayout []string //create final string array with predefined length "lines"
 	var leftover string //create array to hold remainder after /n is found
 	for i := range readout {
 		leftover = i + leftover  //prepend fileout from file reader to leftover array
