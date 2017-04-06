@@ -21,7 +21,7 @@ func check(e error) {
 }
 
 // reads file in chunks until line count satisfied
-func file_reader(file string, size int64) chan []string {
+func file_reader(file string, size int64) chan string {
 	readout := make(chan string)
 	f, err := os.Open(file)
 	check(err)
