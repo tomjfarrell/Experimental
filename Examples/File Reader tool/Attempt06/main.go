@@ -22,7 +22,7 @@ func check(e error) {
 
 // reads file in chunks until line count satisfied
 func file_reader(file string, size int64) chan []byte {
-	fileout := make(chan []byte)
+	readerout := make(chan []byte)
 	f, err := os.Open(file)
 	check(err)
   chunk_size := 500
@@ -31,33 +31,33 @@ func file_reader(file string, size int64) chan []byte {
 		for i := int(size); i > 0; i -= chunk_size {
 			if i >= chunk_size {
 				//read file in specified chunk size
-				count, err := f.ReadAt(data, int64(i - chunk_size))
+				output, err := f.ReadAt(data, int64(i - chunk_size))
 				check(err)
-				fileout <- count
-				close(fileout)
+				readerout <- output
+				close(readerout)
 			} else {
 				//read remainder
 				remainder := make([]byte, i)
-				count, err := f.Read(remainder)
+				output, err := f.Read(remainder)
 				check(err)
-				fileout <- count
-				close(fileout)
+				readerout <- output
+				close(readerout)
 			}
 		}
 	}()
-	return fileout
+	return readerout
 }
 
 //will find lines from data received from filereader and return them in array
-func line_finder(fileout chan []byte, lines int) []string {
+func line_finder(readerout chan []byte, lines int) []string {
   var array [lines]string //create final array with predefined length
 	var leftover []byte //create array to hold remainder after /n is found
-	copy(leftover, fileout)  //copy fileout from file reader to leftover array
-	for i := range fileout {
+	leftover = append(readerout, leftover)  //prepend fileout from file reader to leftover array
+	for i := range readerout {
 		if strings.Contains(i, "/n") { //if fileout contains /n
 			split := strings.Split(i, "/n") //split at /n
-			append(array, string(split[1])) //append line to final array
-			append(leftover, byte[](split[0])) //append remainder to leftover array
+			array = append(string(split[1]), array) //append full line to final array
+			leftover = append(leftover, []byte(split[0])) //append remainder to leftover array
 		} else { //if no /n is found
 			append(leftover, i) //append to leftover array
 		}
