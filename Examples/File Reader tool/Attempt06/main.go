@@ -22,7 +22,7 @@ func check(e error) {
 
 // reads file in chunks until line count satisfied
 func file_reader(file string, size int64) chan []string {
-	readout := make(chan []string)
+	readout := make(chan string)
 	f, err := os.Open(file)
 	check(err)
 	chunk_size := 500
@@ -33,16 +33,16 @@ func file_reader(file string, size int64) chan []string {
 				//read file in specified chunk size
 				count, err := f.ReadAt(data, int64(i - chunk_size))
 				check(err)
-				readout <- []string(data[:count])
+				readout <- string(data[:count])
 			} else {
 				//read remainder
 				remainder := make([]byte, i)
 				count, err := f.Read(remainder)
 				check(err)
-				readout <- []string(remainder[:count])
+				readout <- string(remainder[:count])
 			}
-			close(readout)
 		}
+		close(readout)
 	}()
 	return readout
 }
