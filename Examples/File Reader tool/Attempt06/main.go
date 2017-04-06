@@ -21,8 +21,8 @@ func check(e error) {
 }
 
 // reads file in chunks until line count satisfied
-func file_reader(file string, size int64) chan []byte {
-	readout := make(chan []byte)
+func file_reader(file string, size int64) chan []string {
+	readout := make(chan []string)
 	f, err := os.Open(file)
 	check(err)
 	chunk_size := 500
@@ -33,25 +33,24 @@ func file_reader(file string, size int64) chan []byte {
 				//read file in specified chunk size
 				count, err := f.ReadAt(data, int64(i - chunk_size))
 				check(err)
-				readout <- data[:count]
-				close(readout)
+				readout <- []string(data[:count])
 			} else {
 				//read remainder
 				remainder := make([]byte, i)
 				count, err := f.Read(remainder)
 				check(err)
-				readout <- remainder[:count]
-				close(readout)
+				readout <- []string(remainder[:count])
 			}
+			close(readout)
 		}
 	}()
 	return readout
 }
 
 //will find lines from data received from filereader and return them in array
-func line_finder(readout chan []byte, lines int) []string {
+func line_finder(readout chan []string, lines int) []string {
   var array [lines]string //create final string array with predefined length
-	var leftover []byte //create array to hold remainder after /n is found
+	var leftover []string //create array to hold remainder after /n is found
 	for i := range readout {
 		leftover = append(readout, leftover...)  //prepend fileout from file reader to leftover array
 		if strings.Contains(i, "\n") { //if fileout contains \n
