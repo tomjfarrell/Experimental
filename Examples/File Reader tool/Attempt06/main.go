@@ -30,13 +30,13 @@ func file_reader(file string, size int64) chan []byte {
 	go func() {
 		for i := int(size); i > 0; i -= chunk_size {
 			if i >= chunk_size {
-				fmt.Printf("***reading %v bytes, starting at offset %v***\n", len(data), i - chunk_size)
+				//read file in specified chunk size
 				count, err := f.ReadAt(data, int64(i - chunk_size))
 				check(err)
 				fileout <- count
 				close(fileout)
 			} else {
-				fmt.Printf("***less than %v bytes left, printing remaining %v from beginning***\n", len(data), i)
+				//read remainder
 				remainder := make([]byte, i)
 				count, err := f.Read(remainder)
 				check(err)
@@ -49,8 +49,20 @@ func file_reader(file string, size int64) chan []byte {
 }
 
 //will find lines from data received from filereader and return them in array
-func line_finder(data string, lines int) []string {
-  array := make([]byte, lines)
+func line_finder(fileout chan []byte, lines int) []string {
+  var array [lines]string //create final array with predefined length
+	var leftover []byte //create array to hold remainder after /n is found
+	copy(leftover, fileout)  //copy fileout from file reader to leftover array
+	for i := range fileout {
+		if strings.Contains(i, "/n") { //if fileout contains /n
+			split := strings.Split(i, "/n") //split at /n
+			append(array, string(split[1])) //append line to final array
+			append(leftover, byte[](split[0])) //append remainder to leftover array
+		} else { //if no /n is found
+			append(leftover, i) //append to leftover array
+		}
+	}
+	return array
 }
 
 //counts lines so that line numbers will be correct
@@ -74,7 +86,7 @@ func line_counter(r io.Reader) (int, error) {
 }
 
 //final print of requested data with line numbers
-func request_printer(answer []byte) {
+func request_printer(answer []string) {
 	for i := 0; i < len(answer); i++ {
 		fmt.Println(i + 1, ":", answer[i])
 	}
