@@ -25,7 +25,7 @@ func file_reader(file string, size int64) chan []byte {
 	readout := make(chan []byte)
 	f, err := os.Open(file)
 	check(err)
-  chunk_size := 500
+	chunk_size := 500
 	data := make([]byte, chunk_size)
 	go func() {
 		for i := int(size); i > 0; i -= chunk_size {
@@ -54,11 +54,11 @@ func line_finder(readout chan []byte, lines int) []string {
 	var leftover []byte //create array to hold remainder after /n is found
 	for i := range readout {
 		leftover = append(readout, leftover...)  //prepend fileout from file reader to leftover array
-		if strings.Contains(i, "/n") { //if fileout contains /n
-			split := strings.Split(i, "/n") //split at /n
+		if strings.Contains(i, "\n") { //if fileout contains \n
+			split := strings.Split(i, "\n") //split at \n
 			array = append(string(split[1]), array) //append full line to final array
 			leftover = append(leftover, []byte(split[0])) //append remainder to leftover array
-		} else { //if no /n is found
+		} else { //if no \n is found
 			append(leftover, i) //append to leftover array
 		}
 	}
