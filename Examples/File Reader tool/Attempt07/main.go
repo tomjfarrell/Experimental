@@ -17,7 +17,6 @@ func check(e error) {
 	}
 }
 
-// reads file in chunks until line count satisfied
 func back_reader(file string, size int64, lines int) []string {
 	var output []string
 	var leftover string
