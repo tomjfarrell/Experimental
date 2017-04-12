@@ -136,23 +136,48 @@ func front_reader(size int64, lines int) []string {
 	return output
 }
 
-func web_front_reader() []byte {
-	var h []byte
+func web_front_reader() []string {
 
-	fmt.Printf("Page address: %v\n\n", *web)
-
+	var output []string
 
 	resp, err := http.Get(*web)
 	check(err)
-	fmt.Printf("resp: %v\n\n", resp)
 	defer resp.Body.Close()
 
-	h, err = ioutil.ReadAll(resp.Body)
-	fmt.Printf("h: %v\n\n", h)
+	h, err := ioutil.ReadAll(resp.Body)
 	check(err)
 
-	fmt.Printf("Body: %s\n\n", h)
-	return h
+	fmt.Printf("\nWebpage: '%v'|Size: %d bytes|Modified: %v \n\n", *web, len(h), resp.Header.Get("Last-Modified"))
+	fmt.Printf("Pulling first %v lines...\n\n", *alines)
+
+	array := strings.Split(string(h), "\n")
+
+	if len(array) >= *alines {
+		output = append(array[:*alines], output...)
+	}
+	return output
+}
+
+func web_back_reader() []string {
+
+	var output []string
+
+	resp, err := http.Get(*web)
+	check(err)
+	defer resp.Body.Close()
+
+	h, err := ioutil.ReadAll(resp.Body)
+	check(err)
+
+	fmt.Printf("\nWebpage: '%v'|Size: %d bytes|Modified: %v \n\n", *web, len(h), resp.Header.Get("Last-Modified"))
+	fmt.Printf("Pulling last %v lines...\n\n", *zlines)
+
+	array := strings.Split(string(h), "\n")
+
+	if len(array) >= *zlines {
+		output = append(array[len(array)-*zlines:], output...)
+	}
+	return output
 }
 
 func line_finder(text string) []string {
@@ -164,10 +189,10 @@ func line_finder(text string) []string {
 	return arrayout
 }
 
-func printrequest(file string) int64 {
+func print_file_request(file string) int64 {
 	stat, err := os.Stat(file)
 	check(err)
-	fmt.Printf("Filename: '%s'|Size: %d bytes|Modified: %v\n", stat.Name(),stat.Size(),stat.ModTime())
+	fmt.Printf("\nFilename: '%s'|Size: %d bytes|Modified: %v\n", stat.Name(),stat.Size(),stat.ModTime())
 	return stat.Size()
 }
 
@@ -186,32 +211,30 @@ func main() {
 	}
 
 	if *alines != 0 && *file != "" {
-		size := printrequest(*file)
-		fmt.Printf("Pulling first %v lines...\n", *alines)
+		size := print_file_request(*file)
+		fmt.Printf("\nPulling first %v lines...\n", *alines)
 		output := front_reader(size, *alines)
 		for i := 0; i < len(output) && i + 1 <= *alines; i++ {
 			fmt.Printf("Line #%v: %v\n\n", i + 1, output[i])
 		}
 	}
 	if *zlines != 0 && *file != "" {
-		size := printrequest(*file)
-		fmt.Printf("Pulling last %v lines...\n", *zlines)
+		size := print_file_request(*file)
+		fmt.Printf("\nPulling last %v lines...\n", *zlines)
 		output := back_reader(size, *zlines)
 		for i := 0; i < len(output) && i + 1 <= *zlines; i++ {
 			fmt.Printf("Line #%v: %v\n\n", i + 1, output[i])
 		}
 	}
 	if *alines != 0 && *web != "" {
-		fmt.Println("web_front_reader...")
 		output := web_front_reader()
 		for i := 0; i < len(output) && i + 1 <= *alines; i++ {
 			fmt.Printf("Line #%v: %v\n\n", i + 1, output[i])
 		}
 	}
 	if *zlines != 0 && *web != "" {
-		fmt.Println("\nweb_front_reader...\n")
-		output := web_front_reader()
-		for i := 0; i < len(output) && i + 1 <= *alines; i++ {
+		output := web_back_reader()
+		for i := 0; i < len(output) && i + 1 <= *zlines; i++ {
 			fmt.Printf("Line #%v: %v\n\n", i + 1, output[i])
 		}
 	}
