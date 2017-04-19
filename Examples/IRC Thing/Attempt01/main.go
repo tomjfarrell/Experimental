@@ -67,6 +67,21 @@ func handlingINOUT(IN <-chan string, lst *list.List) {
 	}
 }
 
+// clientHandling(): get the username and create the clientsturct
+// start the clientsender/receiver, add client to list.
+func clientHandling(con *net.Conn, ch chan string, lst *list.List) {
+	buf := make([]byte, 1024);
+	con.Read(buf);
+	name := string(buf);
+	newclient := &ClientChat{name, make(chan string), ch, con, make(chan bool), lst};
+
+	Info.Println("clientHandling(): for ", name);
+	go clientsender(newclient);
+	go clientreceiver(newclient);
+	lst.PushBack(*newclient);
+	ch<- name+" has joinet the chat";
+}
+
 func main() {
 
 	Init(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
@@ -96,39 +111,7 @@ func main() {
 
 
 /*
-// Handles incoming requests.
-func handleRequest(conn net.Conn) {
-	// Make a buffer to hold incoming data.
-	buf := make([]byte, 1024)
-	// Read the incoming connection into the buffer.
-	_, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("Error reading:", err.Error())
-	}
-	// Send a response back to person contacting us.
-	conn.Write([]byte("Message received."))
-	// Close the connection when you're done with it.
-	conn.Close()
-}
-	////////////////////////////
-	// Listen for incoming connections.
-	l, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
-	if err != nil {
-		fmt.Println("Error listening:", err.Error())
-		os.Exit(1)
-	}
-	// Close the listener when the application closes.
-	defer l.Close()
-	fmt.Println("Listening on " + CONN_HOST + ":" + CONN_PORT)
-	for {
-		// Listen for an incoming connection.
-		conn, err := l.Accept()
-		if err != nil {
-			fmt.Println("Error accepting: ", err.Error())
-			os.Exit(1)
-		}
-		// Handle connections in a new goroutine.
-		go handleRequest(conn)
-	}
-}
+Borrowed heavily from:
+http://raycompstuff.blogspot.com.au/2009/12/simpler-chat-server-and-client-in.html
+https://www.goinggo.net/2013/11/using-log-package-in-go.html
 */
