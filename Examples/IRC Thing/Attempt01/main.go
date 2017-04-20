@@ -11,6 +11,8 @@ import (
 	"bytes"
 )
 
+var debug = flag.Bool("d", false, "set the debug modus( print informations )")
+
 const (
 	CONN_HOST = ""
 	CONN_PORT = "3333"
@@ -24,27 +26,12 @@ var (
 	Error   *log.Logger
 )
 
-var running bool;  // global variable if client is running
-
-var debug = flag.Bool("d", false, "set the debug modus( print informations )")
-
 func Init(
-traceHandle io.Writer,
 infoHandle io.Writer,
-warningHandle io.Writer,
 errorHandle io.Writer) {
-	Trace = log.New(traceHandle,
-		"TRACE: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
 	Info = log.New(infoHandle,
 		"INFO: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
-
-	Warning = log.New(warningHandle,
-		"WARNING: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
 	Error = log.New(errorHandle,
 		"ERROR: ",
 		log.Ldate|log.Ltime|log.Lshortfile)
@@ -174,8 +161,12 @@ func clientHandling(con net.Conn, ch chan string, lst *list.List) {
 
 func main() {
 
-	Init(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 	flag.Parse()
+	infolog := ioutil.Discard
+	if *debug == true {
+		infolog = os.Stdout
+	}
+	Init(infolog, os.Stderr)
 
 	Info.Println("main(): start")
 
@@ -186,8 +177,7 @@ func main() {
 	go handlingINOUT(in, clientlist)
 
 	// create the connection
-	hostport := CONN_HOST+":"+CONN_PORT
-	netlisten, err := net.Listen("tcp", hostport)
+	netlisten, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	Error.Println(err, "main Listen")
 	defer netlisten.Close()
 
