@@ -2,23 +2,27 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 func main() {
 	var n int
+	fmt.Print("Input directory size(int): ")
 	fmt.Scan(&n)
 
-	m := make(map[string]string)
-	var x string
-	var entry []string
+
+	m := make(map[string]int)
+	var name string
+	var phone int
 
 	for i := 0; i < n; i++ {
-		fmt.Scanln(&x)
-		entry = strings.Split(x, " ")
-		fmt.Println(entry)
-		m[entry[0]] = entry[1]
-		//m["route"] = 66
-		fmt.Println(entry)
+		fmt.Printf("N = %v | i = %v\n", n, i)
+		fmt.Print("Input record(name phone_number): ")
+		fmt.Scan(&name, &phone)
+		fmt.Printf("Name received: %v | Phone received: %v\n", name, phone)
+		m[name] = phone
+		fmt.Print(m)
 	}
+
+  for fmt.Scan(&name)
+
 }
