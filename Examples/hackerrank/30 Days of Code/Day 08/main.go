@@ -20,9 +20,17 @@ func main() {
 		fmt.Scan(&name, &phone)
 		fmt.Printf("Name received: %v | Phone received: %v\n", name, phone)
 		m[name] = phone
-		fmt.Print(m)
+		fmt.Println(m)
 	}
 
-  for fmt.Scan(&name)
+  for {
+	  fmt.Scan(&name)
+	  _, ok := m[name]
+	  if !ok {
+		  fmt.Println("Not found")
+	  } else {
+		  fmt.Printf("%v=%v\n", name, phone)
+	  }
+  }
 
 }
