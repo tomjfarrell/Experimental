@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 )
 
 func main() {
@@ -29,7 +28,7 @@ func main() {
 				fmt.Printf("%v=%v\n", name, phone)
 			}
 		} else {
-			os.Exit(1)
+			return
 		}
 	}
 }
