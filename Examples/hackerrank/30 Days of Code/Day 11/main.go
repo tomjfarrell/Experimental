@@ -21,19 +21,19 @@ func main() {
 	for i := 0; i < 6; i ++ {
 		fmt.Println(m[i])
 	}
-	for i, j := 1, 1; i < 5 && j < 5; j++ {
+	for i := 1 ; i < 5; i++ {
 		total := 0
-		total = m[i][j] + m[i-1][j-1] + m[i-1][j] + m[i-1][j+1] + m[i+1][j-1] + m[i+1][j] + m[i+1][j+1]
-		fmt.Printf("hourglass total for m[%v][%v]= %v\n", i, j, total)
-		if total > max {
-			max = total
-		}
-		if j == 4 {
-			i++
-			j = 1
+		for j := 1 ; j < 5; j++ {
+			total = m[i][j] + m[i-1][j-1] + m[i-1][j] + m[i-1][j+1] + m[i+1][j-1] + m[i+1][j] + m[i+1][j+1]
+			fmt.Printf("hourglass total for m[%v][%v]= %v\n", i, j, total)
+			if i == 1 && j == 1 {
+				fmt.Println("first calculation set to max")
+				max = total
+			}
+			if total > max {
+				max = total
+			}
 		}
 	}
 	fmt.Println(max)
 }
-
-
