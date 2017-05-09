@@ -2,33 +2,34 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 func main() {
+	var m = make(map[byte]bool)
 	var n int
 	fmt.Scan(&n)
 	var s1 string
 	var s2 string
 
+
 	for i := 0; i < n; i++ {
-		z := "NO"
 		fmt.Scan(&s1)
 		fmt.Scan(&s2)
-    if s1 > s2 {
-	    x := strings.Split(s2, "")
-	    for i := range x {
-		    if strings.Contains(s1, x[i]) {
-			    z = "YES"
+    if len(s1) > len(s2) {
+	    for _,c := range s2 {
+		    m[c] = true
+		    for _,c := range s1 {
+			    if m[c] {
+				    fmt.Println("YES")
+				    break
+			    }
 		    }
 	    }
-    }
-		if s2 > s1 {
-			x := strings.Split(s1, "")
-			for i := range x {
-				if strings.Contains(s2, x[i]) {
-					z = "YES"
-				}
+    else {
+	    for _,c := range s1 {
+		    m[c] = true
+	    }
+
 		}
 		}
 		fmt.Println(z)
