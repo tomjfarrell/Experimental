@@ -5,11 +5,12 @@ import (
 )
 
 func check(mag map[string]int, ran map[string]int) {
-	ans := "No"
+	ans := "Yes"
 
 	for key, value := range ran {
-		if mag[key] >= value {
-			ans = "Yes"
+		if mag[key] < value {
+			ans = "No"
+			fmt.Printf("mag[%v]=%v < ran[%v]=%v\n", key, mag[key], key, ran[key])
 		}
 	}
 
